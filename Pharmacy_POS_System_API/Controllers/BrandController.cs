@@ -26,8 +26,13 @@ namespace Pharmacy_POS_System_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Brand>> AddBrand(Brand brand)
+        public async Task<ActionResult<Brand>> AddBrand(BrandDto brandDto)
         {
+            var brand = new Brand
+            {
+                Name = brandDto.Name
+            };
+
             _context.Brands.Add(brand);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetBrands), new { id = brand.Id }, brand);
