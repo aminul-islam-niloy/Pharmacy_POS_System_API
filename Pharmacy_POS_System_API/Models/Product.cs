@@ -11,7 +11,7 @@ namespace Pharmacy_POS_System_API.Models
         public string Generic { get; set; }
         public decimal Discount { get; set; }
         public decimal Vat { get; set; }
-        public string ImageUrl { get; set; }
+        public byte[] Image { get; set; }
         public int StockQuantity { get; set; }
         public int CategoryId { get; set; }
         [JsonIgnore]
