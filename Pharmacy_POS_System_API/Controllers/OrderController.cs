@@ -15,13 +15,36 @@ namespace Pharmacy_POS_System_API.Controllers
         {
             _context = context;
         }
-
-        [HttpPost]
-        public async Task<ActionResult> PlaceOrder(Order order)
+        [HttpPost("save-order")]
+        public async Task<IActionResult> SaveOrder([FromBody] OrderDto orderDto)
         {
+            var order = new Order
+            {
+                OrderDate = orderDto.OrderDate,
+                TotalAmount = orderDto.TotalAmount,
+                Discount = orderDto.Discount,
+                Vat = orderDto.Vat,
+                PaidAmount = orderDto.PaidAmount,
+                ChangeAmount = orderDto.ChangeAmount,
+                PaymentMethod = orderDto.PaymentMethod,
+                Items = orderDto.Items.Select(i => new CartItem
+                {
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity,
+                    ProductName=i.ProductName,
+                    Price = i.Price,
+                    Discount=i.Discount,
+                    Vat=i.Vat,
+                    SubTotal = i.SubTotal
+                }).ToList()
+            };
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return Ok(order);
+
+            return Ok(new { message = "Order Saved Successfully!" });
         }
     }
 }
+
+
