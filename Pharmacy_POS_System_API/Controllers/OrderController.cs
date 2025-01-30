@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Pharmacy_POS_System_API.Data;
 using Pharmacy_POS_System_API.Models;
 
@@ -44,7 +45,39 @@ namespace Pharmacy_POS_System_API.Controllers
 
             return Ok(new { message = "Order Saved Successfully!" });
         }
+
+        [HttpGet("get-all-orders")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.Items) 
+                .Select(o => new Order
+                {
+                    Id = o.Id,
+                    OrderDate = o.OrderDate,
+                    TotalAmount = o.TotalAmount,
+                    Discount = o.Discount,
+                    Vat = o.Vat,
+                    PaidAmount = o.PaidAmount,
+                    ChangeAmount = o.ChangeAmount,
+                    PaymentMethod = o.PaymentMethod,
+                    Items = o.Items.Select(i => new CartItem
+                    {
+                        ProductId = i.ProductId,
+                        Quantity = i.Quantity,
+                        ProductName = i.ProductName,
+                        Price = i.Price,
+                        Discount = i.Discount,
+                        Vat = i.Vat,
+                        SubTotal = i.SubTotal
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(orders);
+        }
     }
+
 }
 
 
