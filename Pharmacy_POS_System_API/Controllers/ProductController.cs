@@ -108,7 +108,6 @@ namespace Pharmacy_POS_System_API.Controllers
                 return NotFound($"Product with ID {id} not found.");
             }
 
-
             if (productDto.Image != null && productDto.Image.Length > 0)
             {
                 using (var memoryStream = new MemoryStream())
