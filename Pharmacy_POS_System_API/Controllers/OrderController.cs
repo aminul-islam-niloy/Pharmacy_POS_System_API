@@ -41,6 +41,23 @@ namespace Pharmacy_POS_System_API.Controllers
             };
 
             _context.Orders.Add(order);
+
+            foreach (var item in orderDto.Items)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null)
+                {
+                    if (product.StockQuantity >= item.Quantity)
+                    {
+                        product.StockQuantity -= item.Quantity;
+                    }
+                    else
+                    {
+                        return BadRequest($"Not enough stock for product {product.Name}");
+                    }
+                }
+            }
+
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Order Saved Successfully!" });

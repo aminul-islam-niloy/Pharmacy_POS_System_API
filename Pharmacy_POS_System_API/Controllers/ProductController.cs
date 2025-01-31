@@ -59,31 +59,6 @@ namespace Pharmacy_POS_System_API.Controllers
             return NoContent(); 
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateProduct(int id, ProductDto productDto)
-        //{
-
-        //    var product = await _context.Products.FindAsync(id);
-        //    if (product == null)
-        //    {
-        //        return NotFound($"Product with ID {id} not found.");
-        //    }
-
-        //    product.Name = productDto.Name;
-        //    product.Price = productDto.Price;
-        //    product.Barcode = productDto.Barcode;
-        //    product.Generic = productDto.Generic;
-        //    product.Discount = productDto.Discount;
-        //    product.Vat = productDto.Vat;
-        //    product.ImageUrl = productDto.ImageUrl;
-        //    product.StockQuantity = productDto.StockQuantity;
-        //    product.CategoryId = productDto.CategoryId;
-
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(product); 
-        //}
-
 
         [HttpPost]
         public async Task<ActionResult<Product>> AddProduct([FromForm] ProductDto productCreateDto)
@@ -124,6 +99,40 @@ namespace Pharmacy_POS_System_API.Controllers
             return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, product);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductDto productDto)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound($"Product with ID {id} not found.");
+            }
+
+
+            if (productDto.Image != null && productDto.Image.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await productDto.Image.CopyToAsync(memoryStream);
+                    product.Image = memoryStream.ToArray();
+                }
+            }
+
+            product.Name = productDto.Name;
+            product.Price = productDto.Price;
+            product.Barcode = productDto.Barcode;
+            product.Generic = productDto.Generic;
+            product.Discount = productDto.Discount;
+            product.Vat = productDto.Vat;
+            product.StockQuantity = productDto.StockQuantity;
+            product.CategoryId = productDto.CategoryId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Product updated successfully!", product });
+        }
+
+
         [HttpGet("{id}/image")]
         public async Task<IActionResult> GetProductImage(int id)
         {
@@ -136,7 +145,6 @@ namespace Pharmacy_POS_System_API.Controllers
 
             return File(product.Image, "image/jpeg"); 
         }
-
 
 
     }
