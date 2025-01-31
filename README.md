@@ -1,6 +1,6 @@
 
 
-# Pharmacy POS System 
+## Pharmacy POS System 
 ### Backend (ASP.NET Core 6 Web API)
 
 This is the **ASP.NET Core 6 Web API** backend for the **Pharmacy POS System**. It provides API endpoints for managing **Brands, Categories, Products, Cart, and Orders**.
